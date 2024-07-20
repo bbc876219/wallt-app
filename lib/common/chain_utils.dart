@@ -82,7 +82,7 @@ class JsChainLib {
     var ret = await _webView.evalJavascript(code);
     if (Platform.isAndroid) ret = jsonDecode(ret);
     final jsResponse = new JsResponse.fromJson(jsonDecode(ret));
-    print("_runJs.jsResponse=\n$jsResponse");
+    // print("_runJs.jsResponse=\n$jsResponse");
     var error = jsResponse.error;
     if (error.isNotEmpty) {
       print("_runJs.jsResponse.error=$error");
@@ -203,15 +203,27 @@ String generateMnemonic() {
   return bip39.generateMnemonic();
 }
 
-String privateKeyFromMnemonic(String mnemonic) {
-  print("privateKeyFromMnemonic mnemonic=$mnemonic");
-  final seed = bip39.mnemonicToSeed(mnemonic);
+// String privateKeyFromMnemonic(String mnemonic) {
+//   print("privateKeyFromMnemonic mnemonic=$mnemonic");
+//   final seed = bip39.mnemonicToSeed(mnemonic);
+//   print("privateKeyFromMnemonic seed=$seed");
+//   final nodeFromSeed = BIP32.fromSeed(seed);
+//   print("privateKeyFromMnemonic nodeFromSeed=$nodeFromSeed");
+//   final privateKey = nodeFromSeed.privateKey;
+//   print("privateKeyFromMnemonic privateKey=$privateKey");
+//   return HEX.encode(privateKey);
+// }
+String privateKeyFromMnemonic(mnemonic) {
+  String seed = bip39.mnemonicToSeedHex(mnemonic);
   print("privateKeyFromMnemonic seed=$seed");
-  final nodeFromSeed = BIP32.fromSeed(seed);
-  print("privateKeyFromMnemonic nodeFromSeed=$nodeFromSeed");
-  final privateKey = nodeFromSeed.privateKey;
-  print("privateKeyFromMnemonic privateKey=$privateKey");
-  return HEX.encode(privateKey);
+  BIP32 root = BIP32.fromSeed(HEX.decode(seed));
+  print("privateKeyFromMnemonic root=${root.privateKey}");
+  //BIP32 child = root.derivePath("m/44'/12586'/$accountIndex'/0/0");
+  BIP32 child = root.derivePath("m/44'/60'/0'/0/0");
+  print("privateKeyFromMnemonic child=${child.privateKey}");
+  String privateKey = HEX.encode(child.privateKey);
+  print("privateKeyFromMnemonic return.privateKey=${privateKey}");
+  return privateKey;
 }
 
 Future<Map<String, dynamic>> transferToken({
