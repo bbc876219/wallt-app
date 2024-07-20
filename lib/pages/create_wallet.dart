@@ -18,8 +18,8 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
 
-  final _passwordController = new TextEditingController();
-  final _passwordConfirmController = new TextEditingController();
+  final _passwordController = new TextEditingController(text:"password");
+  final _passwordConfirmController = new TextEditingController(text:"password");
 
   @override
   void initState() {

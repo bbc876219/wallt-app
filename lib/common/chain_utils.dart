@@ -78,13 +78,17 @@ class JsChainLib {
         return JSON.stringify(res);
       })();
     ''';
+    print("_runJs.request=\n$code");
     var ret = await _webView.evalJavascript(code);
     if (Platform.isAndroid) ret = jsonDecode(ret);
     final jsResponse = new JsResponse.fromJson(jsonDecode(ret));
+    print("_runJs.jsResponse=\n$jsResponse");
     var error = jsResponse.error;
     if (error.isNotEmpty) {
+      print("_runJs.jsResponse.error=$error");
       throw error;
     } else {
+      print("_runJs.jsResponse.data=${jsResponse.data}");
       return jsResponse.data;
     }
   }
@@ -200,9 +204,13 @@ String generateMnemonic() {
 }
 
 String privateKeyFromMnemonic(String mnemonic) {
+  print("privateKeyFromMnemonic mnemonic=$mnemonic");
   final seed = bip39.mnemonicToSeed(mnemonic);
+  print("privateKeyFromMnemonic seed=$seed");
   final nodeFromSeed = BIP32.fromSeed(seed);
+  print("privateKeyFromMnemonic nodeFromSeed=$nodeFromSeed");
   final privateKey = nodeFromSeed.privateKey;
+  print("privateKeyFromMnemonic privateKey=$privateKey");
   return HEX.encode(privateKey);
 }
 

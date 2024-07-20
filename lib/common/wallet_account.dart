@@ -46,13 +46,15 @@ class WalletAccount {
 
   static Future<WalletAccount> fromMnemonic(
       String mnemonic, String password) async {
-    var mnemonicKeystore =
-        await JsChainLib.mnemonicToKeystore(mnemonic, password);
-
+    print("start fromMnemonic()  password=$password ,mnemonics=$mnemonic");
+    var mnemonicKeystore = await JsChainLib.mnemonicToKeystore(mnemonic, password);
+    print("JsChainLib.mnemonicToKeystore=$mnemonicKeystore ");
     var privateKey = privateKeyFromMnemonic(mnemonic);
+    print("privateKeyFromMnemonic  privateKey=$privateKey ");
     var address = await JsChainLib.addressFromPrivateKey(privateKey);
-    var keystore =
-        await JsChainLib.privateKeyToKeyStore(privateKey, address, password);
+    print("JsChainLib.addressFromPrivateKey  address=$address ");
+    var keystore = await JsChainLib.privateKeyToKeyStore(privateKey, address, password);
+    print("JsChainLib.privateKeyToKeyStore  keystore=$keystore ");
 
     return WalletAccount(
       address: address,

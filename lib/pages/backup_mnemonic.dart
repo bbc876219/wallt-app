@@ -34,11 +34,16 @@ class _BackupMnemonicPageState extends State<BackupMnemonicPage> {
     Loading.show(context);
     try {
       String password = ModalRoute.of(context).settings.arguments;
+      print("ready fromMnemonic()  password=$password ,mnemonics=$mnemonics");
       var account = await WalletAccount.fromMnemonic(mnemonics, password);
+      print("end fromMnemonic() start saveAndActive() account=$account");
       await account.saveAndActive();
+      print("end saveAndActive()");
       Navigator.of(context)
           .pushNamedAndRemoveUntil(AppMainContainer.routeName, (_) => false);
-    } catch (e) {
+    } catch (e , s) {
+      print("error = $e");
+      print(StackTrace.fromString(s.toString()));
       showInSnackBar(AppLocalizations.of(context).backupMnemonicErr + '$e');
       Loading.hide(context);
     }

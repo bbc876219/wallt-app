@@ -76,3 +76,9 @@ note.local.md
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 .flutter-plugins-dependencies
 ios/Flutter/Flutter.podspec
+
+# FVM Version Cache
+.fvm/
+/.fvmrc
+/android/.gitignore
+/.vscode/settings.json

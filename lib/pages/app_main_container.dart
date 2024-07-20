@@ -95,13 +95,13 @@ class _AppMainContainerState extends State<AppMainContainer> {
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.account_balance_wallet),
-          title:
-              Text(AppLocalizations.of(context).appMainContainerNavBarWallet),
+          // title:
+          //     Text(AppLocalizations.of(context).appMainContainerNavBarWallet),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.account_box),
-          title:
-              Text(AppLocalizations.of(context).appMainContainerNavBarAccount),
+          // title:
+          //     Text(AppLocalizations.of(context).appMainContainerNavBarAccount),
         )
       ],
       currentIndex: _layoutSelection.index,
