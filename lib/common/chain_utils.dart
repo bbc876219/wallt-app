@@ -219,9 +219,9 @@ String privateKeyFromMnemonic(mnemonic) {
   BIP32 root = BIP32.fromSeed(HEX.decode(seed));
   print("privateKeyFromMnemonic root=${root.privateKey}");
   //BIP32 child = root.derivePath("m/44'/12586'/$accountIndex'/0/0");
-  BIP32 child = root.derivePath("m/44'/60'/0'/0/0");
-  print("privateKeyFromMnemonic child=${child.privateKey}");
-  String privateKey = HEX.encode(child.privateKey);
+  //BIP32 child = root.derivePath("m/44'/60'/0'/0/0");
+  //print("privateKeyFromMnemonic child=${child.privateKey}");
+  String privateKey = HEX.encode(root.privateKey);
   print("privateKeyFromMnemonic return.privateKey=${privateKey}");
   return privateKey;
 }
