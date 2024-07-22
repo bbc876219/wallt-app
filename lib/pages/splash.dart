@@ -28,7 +28,7 @@ class SplashState extends State<SplashPage> {
         var activeWalletAddress =
             prefs.getString(PreferencesKeys.activeWalletAddress) ?? '';
         if (activeWalletAddress.isEmpty) {
-          var agreedTerms = prefs.getBool(PreferencesKeys.agreedTerms) ?? false;
+          var agreedTerms = prefs.getBool(PreferencesKeys.agreedTerms) ?? true;
           if (agreedTerms) {
             routerName = InitWalletPage.routeName;
           } else {

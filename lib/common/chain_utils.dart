@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:flutter/services.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:bip32/bip32.dart';
+import 'package:web3dart/credentials.dart';
 import 'package:hex/hex.dart';
 import 'dart:convert';
 
@@ -78,17 +80,17 @@ class JsChainLib {
         return JSON.stringify(res);
       })();
     ''';
-    print("_runJs.request=\n$code");
+    //print("_runJs.request=\n$code");
     var ret = await _webView.evalJavascript(code);
     if (Platform.isAndroid) ret = jsonDecode(ret);
     final jsResponse = new JsResponse.fromJson(jsonDecode(ret));
     // print("_runJs.jsResponse=\n$jsResponse");
     var error = jsResponse.error;
     if (error.isNotEmpty) {
-      print("_runJs.jsResponse.error=$error");
+      //print("_runJs.jsResponse.error=$error");
       throw error;
     } else {
-      print("_runJs.jsResponse.data=${jsResponse.data}");
+      //print("_runJs.jsResponse.data=${jsResponse.data}");
       return jsResponse.data;
     }
   }
@@ -124,11 +126,11 @@ class JsChainLib {
     return jsonDecode(res);
   }
 
-  static Future<String> mnemonicToKeystore(String mnemonic, String password) {
-    var hexStr = ascii
-        .encode(mnemonic)
-        .fold('', (prev, codeUnit) => prev + codeUnit.toRadixString(16));
-    return privateKeyToKeyStore(hexStr, 'mnemonic', password);
+  static Future<String> mnemonicToKeystore(String privateKey,String mnemonic, String password) {
+    // var hexStr = ascii
+    //     .encode(mnemonic)
+    //     .fold('', (prev, codeUnit) => prev + codeUnit.toRadixString(16));
+    return privateKeyToKeyStore(privateKey, mnemonic, password);
   }
 
   static Future<bool> isValidAddress(String address) async {
@@ -191,7 +193,7 @@ class JsChainLib {
 
     // test mnemonicToKeystore & mnemonicFromKeystore
     var mnemonic = generateMnemonic();
-    var keystore2 = await mnemonicToKeystore(mnemonic, '12132');
+    var keystore2 = await mnemonicToKeystore(testPrivateKey,mnemonic, '12132');
     var mnemonic2 = await mnemonicFromKeystore(keystore2, '12132');
     assert(mnemonic == mnemonic2,
         "mnemonicToKeystore & mnemonicFromKeystore error");
@@ -203,27 +205,43 @@ String generateMnemonic() {
   return bip39.generateMnemonic();
 }
 
-// String privateKeyFromMnemonic(String mnemonic) {
-//   print("privateKeyFromMnemonic mnemonic=$mnemonic");
-//   final seed = bip39.mnemonicToSeed(mnemonic);
-//   print("privateKeyFromMnemonic seed=$seed");
-//   final nodeFromSeed = BIP32.fromSeed(seed);
-//   print("privateKeyFromMnemonic nodeFromSeed=$nodeFromSeed");
-//   final privateKey = nodeFromSeed.privateKey;
-//   print("privateKeyFromMnemonic privateKey=$privateKey");
-//   return HEX.encode(privateKey);
-// }
-String privateKeyFromMnemonic(mnemonic) {
-  String seed = bip39.mnemonicToSeedHex(mnemonic);
-  print("privateKeyFromMnemonic seed=$seed");
-  BIP32 root = BIP32.fromSeed(HEX.decode(seed));
-  print("privateKeyFromMnemonic root=${root.privateKey}");
-  //BIP32 child = root.derivePath("m/44'/12586'/$accountIndex'/0/0");
-  //BIP32 child = root.derivePath("m/44'/60'/0'/0/0");
-  //print("privateKeyFromMnemonic child=${child.privateKey}");
-  String privateKey = HEX.encode(root.privateKey);
-  print("privateKeyFromMnemonic return.privateKey=${privateKey}");
+
+Future<String> privateKeyFromMnemonic(String mnemonic) async {
+  final isValidMnemonic = bip39.validateMnemonic(mnemonic);
+  if(!isValidMnemonic) {
+    throw 'Invalid mnemonic';
+  }
+  final seed = bip39.mnemonicToSeed(mnemonic);
+  final root = BIP32.fromSeed(seed);
+
+  const first = 0;
+  final firstChild = root.derivePath("$hdPath/$first");
+  final privateKey =/*'0x' +*/ HEX.encode(firstChild.privateKey as List<int>);
+
   return privateKey;
+}
+String hdPath = "m/44'/60'/0'/0";
+
+@override
+Future<String> getPublicAddress(String privateKey) async {
+  // final private = EthPrivateKey.fromHex(privateKey);
+  // final address = await private.extractAddress();
+  //
+  // print('getPublicAddress address ${address} 私钥 ${privateKey}');
+  Credentials credentials = EthPrivateKey.fromHex(privateKey);
+  EthereumAddress address1 = await credentials.extractAddress();
+  String mAddress = address1.hexEip55;
+  print("地址   ====   " + mAddress);
+  return mAddress;
+}
+Future<String> getKeyStore(String privateKey) async {
+
+  Credentials credentials = EthPrivateKey.fromHex(privateKey);
+  var random = Random();
+  Wallet wallet = Wallet.createNew(credentials, "12345678", random);
+  String keystore = wallet.toJson();
+  print("keystore==== " + keystore);
+  return keystore;
 }
 
 Future<Map<String, dynamic>> transferToken({

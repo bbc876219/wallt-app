@@ -30,11 +30,11 @@ class _ImportWalletPageState extends State<ImportWalletPage>
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   TabController _tabController;
   final _formKey = GlobalKey<FormState>();
-  final _importStringController = new TextEditingController();
+  final _importStringController = new TextEditingController(text:'special lens kiss foam weird concert wheel brush question trouble want clip' );
   String _importStringAsyncValidMsg = '';
-  final _passwordController = new TextEditingController();
+  final _passwordController = new TextEditingController(text: '12345678');
   String _passwordAsyncValidMsg = '';
-  final _passwordConfirmController = new TextEditingController();
+  final _passwordConfirmController = new TextEditingController(text: '12345678');
 
   ImportType _importType = ImportType.mnemonic;
 

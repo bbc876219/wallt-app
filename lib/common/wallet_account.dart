@@ -47,19 +47,26 @@ class WalletAccount {
   static Future<WalletAccount> fromMnemonic(
       String mnemonic, String password) async {
     print("start fromMnemonic()  password=$password ,mnemonics=$mnemonic");
-    var mnemonicKeystore = await JsChainLib.mnemonicToKeystore(mnemonic, password);
+    var privateKey = await privateKeyFromMnemonic(mnemonic);
+    print("privateKeyFromMnemonic  privateKey2=$privateKey ");
+
+    var mnemonicKeystore = await JsChainLib.mnemonicToKeystore(privateKey,mnemonic, password);
     print("JsChainLib.mnemonicToKeystore=$mnemonicKeystore ");
-    var privateKey = privateKeyFromMnemonic(mnemonic);
-    print("privateKeyFromMnemonic  privateKey=$privateKey ");
-    var address = await JsChainLib.addressFromPrivateKey(privateKey);
-    print("JsChainLib.addressFromPrivateKey  address=$address ");
-    var keystore = await JsChainLib.privateKeyToKeyStore(privateKey, address, password);
-    print("JsChainLib.privateKeyToKeyStore  keystore=$keystore ");
+    final mks=mnemonicKeystore;
+
+
+    var address = await getPublicAddress(privateKey);
+    //var address = await JsChainLib.addressFromPrivateKey(privateKey);
+    //print("JsChainLib.addressFromPrivateKey  address=$address ");
+
+    var keystore = await getKeyStore(privateKey);
+    // var keystore = await JsChainLib.privateKeyToKeyStore(privateKey2, address, password);
+    // print("JsChainLib.privateKeyToKeyStore  keystore=$keystore ");
 
     return WalletAccount(
       address: address,
       keystore: keystore,
-      mnemonicKeystore: mnemonicKeystore,
+      mnemonicKeystore: mks,
     );
   }
 

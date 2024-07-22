@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-const ADDRESS_PREFIX = 'ruff';
+const ADDRESS_PREFIX = '';
 
 const AppBackgroundColor = Color(0xFFEEEEEE);
 const AppPrimaryColor = Color(0xFF07C8CA);
