@@ -32,28 +32,28 @@ class _AppMainContainerState extends State<AppMainContainer> {
   @override
   void initState() {
     super.initState();
-    _checkAppVersionIsUsable();
+    //_checkAppVersionIsUsable();
   }
 
-  void _checkAppVersionIsUsable() async {
-    try {
-      var res = await http.get(
-        Config.VersionInfoUrl,
-        headers: {
-          HttpHeaders.contentTypeHeader: ContentType.json.toString(),
-          HttpHeaders.acceptHeader: ContentType.json.toString(),
-        },
-      );
-      var packageInfo = await PackageInfo.fromPlatform();
-      Map data = jsonDecode(res.body);
-      var minUsable = data['min_usable'];
-      if (Version.parse(packageInfo.version) < Version.parse(minUsable)) {
-        setState(() {
-          _mustUpdate = true;
-        });
-      }
-    } catch (e) {}
-  }
+  // void _checkAppVersionIsUsable() async {
+  //   try {
+  //     var res = await http.get(
+  //       Config.VersionInfoUrl,
+  //       headers: {
+  //         HttpHeaders.contentTypeHeader: ContentType.json.toString(),
+  //         HttpHeaders.acceptHeader: ContentType.json.toString(),
+  //       },
+  //     );
+  //     var packageInfo = await PackageInfo.fromPlatform();
+  //     Map data = jsonDecode(res.body);
+  //     var minUsable = data['min_usable'];
+  //     if (Version.parse(packageInfo.version) < Version.parse(minUsable)) {
+  //       setState(() {
+  //         _mustUpdate = true;
+  //       });
+  //     }
+  //   } catch (e) {}
+  // }
 
   int last = 0;
   Future<bool> _onWillPop() async {

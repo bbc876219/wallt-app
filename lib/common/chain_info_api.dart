@@ -7,6 +7,7 @@ import 'package:ruff_wallet/pages/transaction_history/index.dart';
 
 class ChainInfoApi {
   static Future callRpc(String funName, args) async {
+    print('ChainInfoApi.callRpc url=${Config.ChainInfoRpcUrl} funName=$funName  args=$args');
     var res = await http.post(
       Config.ChainInfoRpcUrl,
       body: jsonEncode(
@@ -19,7 +20,7 @@ class ChainInfoApi {
         HttpHeaders.contentTypeHeader: ContentType.json.toString(),
         HttpHeaders.acceptHeader: ContentType.json.toString(),
       },
-    );
+    ).timeout(Duration(seconds: 5));
     if (res.statusCode < 200 || res.statusCode > 300) {
       throw 'err';
     }

@@ -47,6 +47,7 @@ class _WalletPageState extends State<WalletPage> {
   }
 
   Future _updateData() async {
+    print('_WalletPageState._updateData');
     try {
       setState(() {
         _loading = true;
@@ -76,13 +77,28 @@ class _WalletPageState extends State<WalletPage> {
         _tokenList = tokenList;
         _sysCount = sysCount;
       });
-    } catch (e) {
+    } catch (e , s) {
+       print( "$e  ${StackTrace.fromString(s.toString())}");
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context).walletSnackBar),
           duration: Duration(milliseconds: 2000),
         ),
       );
+       int ruffIndex = 0;
+       List<UserToken> tokenList =new List<UserToken>();
+       tokenList.insert(
+         0,
+         UserToken(
+           name: 'RUFF',
+           type: '',
+           amount: '0',
+         ),
+       );
+       setState(() {
+         _tokenList = tokenList;
+         _sysCount = "0";
+       });
     } finally {
       setState(() {
         _loading = false;

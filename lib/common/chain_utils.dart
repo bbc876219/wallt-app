@@ -2,11 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:bitcoin_flutter/bitcoin_flutter.dart' as bitc;
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:flutter/services.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:bip32/bip32.dart';
-import 'package:web3dart/credentials.dart';
+import 'package:web3dart/credentials.dart' as web3e;
 import 'package:hex/hex.dart';
 import 'dart:convert';
 
@@ -217,7 +218,17 @@ Future<String> privateKeyFromMnemonic(String mnemonic) async {
   const first = 0;
   final firstChild = root.derivePath("$hdPath/$first");
   final privateKey =/*'0x' +*/ HEX.encode(firstChild.privateKey as List<int>);
+  var hdWallet = new bitc.HDWallet.fromSeed(seed);
+  print(hdWallet.address);
+  print(hdWallet.pubKey);
+  print(hdWallet.privKey);
+  print(hdWallet.wif);
 
+  var wallet = bitc.Wallet.fromWIF(hdWallet.wif);
+  print(wallet.address);
+  print(wallet.pubKey);
+  print(wallet.privKey);
+  print(wallet.wif);
   return privateKey;
 }
 String hdPath = "m/44'/60'/0'/0";
@@ -228,17 +239,18 @@ Future<String> getPublicAddress(String privateKey) async {
   // final address = await private.extractAddress();
   //
   // print('getPublicAddress address ${address} 私钥 ${privateKey}');
-  Credentials credentials = EthPrivateKey.fromHex(privateKey);
-  EthereumAddress address1 = await credentials.extractAddress();
+  web3e.Credentials credentials = web3e.EthPrivateKey.fromHex(privateKey);
+  web3e.EthereumAddress address1 = await credentials.extractAddress();
   String mAddress = address1.hexEip55;
-  print("地址   ====   " + mAddress);
+  print("Ethereum 地址   ====   " + mAddress);
+
   return mAddress;
 }
 Future<String> getKeyStore(String privateKey) async {
 
-  Credentials credentials = EthPrivateKey.fromHex(privateKey);
+  web3e.Credentials credentials = web3e.EthPrivateKey.fromHex(privateKey);
   var random = Random();
-  Wallet wallet = Wallet.createNew(credentials, "12345678", random);
+  web3e.Wallet wallet = web3e.Wallet.createNew(credentials, "12345678", random);
   String keystore = wallet.toJson();
   print("keystore==== " + keystore);
   return keystore;
